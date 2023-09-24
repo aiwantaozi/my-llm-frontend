@@ -100,7 +100,7 @@ spec:
 YAML
 }
 
-resource "kubectl_manifest" "amazon-light-gpt" {
+resource "kubectl_manifest" "serve-amazon-light-gpt" {
   yaml_body = <<YAML
 # Make sure to increase resource requests and limits before using this example in production.
 # For examples with more realistic resource configuration, see
