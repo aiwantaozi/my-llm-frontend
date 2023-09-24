@@ -25,13 +25,9 @@ spec:
   serveConfig:
     importPath: ray_main.app
     runtimeEnv: |
-      working_dir: "https://github.com/aiwantaozi/my-llm-frontend/blob/main/my-llm-frontend.zip"
-    deployments:
-      - name: GradioServer
-        numReplicas: 1
-        routePrefix: "/frontend"
-        rayActorOptions:
-          numCpus: 0.1
+      working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/main/my-llm-frontend.zip"
+      pip:
+        - gradio
   rayClusterConfig:
     rayVersion: "2.7.0" # should match the Ray version in the image of the containers
     ######################headGroupSpecs#################################

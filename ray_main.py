@@ -124,6 +124,10 @@ def _get_text(result: dict) -> str:
     elif "delta" in result["choices"][0]:
         return result["choices"][0]["delta"].get("content", "")
 
-app = GradioServer.bind(
+
+app = GradioServer.options(
+    num_replicas=1,
+    ray_actor_options={"num_cpus": 1}
+).bind(
     chatbot
 )
