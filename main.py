@@ -4,6 +4,13 @@ import json
 from typing import AsyncIterator,  Union, Dict
 import aiohttp
 from collections import namedtuple
+import logging
+from ray import serve
+import ray
+from ray.serve.gradio_integrations import GradioIngress
+
+
+PROJECT_NAME = "LLMFrontend"
 
 env_model = "MODEL_NAME"
 env_backend = "BACKEND_URL"

@@ -1,0 +1,125 @@
+apiVersion: ray.io/v1alpha1
+kind: RayService
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"ray.io/v1alpha1","kind":"RayService","metadata":{"annotations":{},"name":"serve-amazon-light-gpt","namespace":"default"},"spec":{"deploymentUnhealthySecondThreshold":300,"rayClusterConfig":{"headGroupSpec":{"rayStartParams":{"dashboard-host":"0.0.0.0"},"template":{"spec":{"containers":[{"env":[{"name":"MODEL_NAME","value":"amazon/LightGPT"},{"name":"BACKEND_URL","value":"http://amazon-light-gpt-serve-svc:8000"}],"image":"rayproject/ray:2.7.0","name":"ray-head","ports":[{"containerPort":6379,"name":"gcs-server"},{"containerPort":8265,"name":"dashboard"},{"containerPort":10001,"name":"client"},{"containerPort":8000,"name":"serve"}],"resources":{"limits":{"cpu":1,"memory":"1Gi"},"requests":{"cpu":1,"memory":"1Gi"}}}]}}},"rayVersion":"2.7.0","workerGroupSpecs":[{"groupName":"small-group","maxReplicas":5,"minReplicas":1,"rayStartParams":{},"replicas":1,"template":{"spec":{"containers":[{"env":[{"name":"MODEL_NAME","value":"test"},{"name":"BACKEND_URL","value":"http://192.168.0.9:1323"}],"image":"rayproject/ray:2.7.0","lifecycle":{"preStop":{"exec":{"command":["/bin/sh","-c","ray stop"]}}},"name":"ray-worker","resources":{"limits":{"cpu":"500m","memory":"1Gi"},"requests":{"cpu":"500m","memory":"1Gi"}}}]}}}]},"serveConfig":{"importPath":"ray_main.app","runtimeEnv":"working_dir: \"https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/main/my-llm-frontend.zip\"\npip:\n  - gradio\n"},"serveService":{"metadata":{"annotations":{"custom-annotation":"serve-amazon-light-gpt-annotation"},"labels":{"custom-label":"serve-amazon-light-gpt-label"},"name":"serve-amazon-light-gpt"},"spec":{"ports":[{"name":"serve-amazon-light-gpt-port","nodePort":32345,"port":8000}],"type":"NodePort"}},"serviceUnhealthySecondThreshold":900}}
+  creationTimestamp: "2023-09-24T10:29:06Z"
+  generation: 1
+  name: serve-amazon-light-gpt
+  namespace: default
+  resourceVersion: "180283"
+  uid: 9bd982f2-2c2f-45da-b6d5-22f50baaf63d
+spec:
+  deploymentUnhealthySecondThreshold: 300
+  rayClusterConfig:
+    headGroupSpec:
+      rayStartParams:
+        dashboard-host: 0.0.0.0
+      template:
+        spec:
+          containers:
+          - env:
+            - name: MODEL_NAME
+              value: amazon/LightGPT
+            - name: BACKEND_URL
+              value: http://amazon-light-gpt-serve-svc:8000
+            image: rayproject/ray:2.7.0
+            name: ray-head
+            ports:
+            - containerPort: 6379
+              name: gcs-server
+              protocol: TCP
+            - containerPort: 8265
+              name: dashboard
+              protocol: TCP
+            - containerPort: 10001
+              name: client
+              protocol: TCP
+            - containerPort: 8000
+              name: serve
+              protocol: TCP
+            resources:
+              limits:
+                cpu: 1
+                memory: 1Gi
+              requests:
+                cpu: 1
+                memory: 1Gi
+    rayVersion: 2.7.0
+    workerGroupSpecs:
+    - groupName: small-group
+      maxReplicas: 5
+      minReplicas: 1
+      rayStartParams: {}
+      replicas: 1
+      template:
+        spec:
+          containers:
+          - env:
+            - name: MODEL_NAME
+              value: test
+            - name: BACKEND_URL
+              value: http://192.168.0.9:1323
+            image: rayproject/ray:2.7.0
+            lifecycle:
+              preStop:
+                exec:
+                  command:
+                  - /bin/sh
+                  - -c
+                  - ray stop
+            name: ray-worker
+            resources:
+              limits:
+                cpu: 500m
+                memory: 1Gi
+              requests:
+                cpu: 500m
+                memory: 1Gi
+  serveConfig:
+    importPath: ray_main.app
+    runtimeEnv: |
+      working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/main/my-llm-frontend.zip"
+      pip:
+        - gradio
+  serveService:
+    metadata:
+      annotations:
+        custom-annotation: serve-amazon-light-gpt-annotation
+      labels:
+        custom-label: serve-amazon-light-gpt-label
+      name: serve-amazon-light-gpt
+    spec:
+      ports:
+      - name: serve-amazon-light-gpt-port
+        nodePort: 32345
+        port: 8000
+        protocol: TCP
+      type: NodePort
+  serviceUnhealthySecondThreshold: 900
+status:
+  activeServiceStatus:
+    applicationStatuses:
+      default:
+        healthLastUpdateTime: "2023-09-24T10:30:03Z"
+        lastUpdateTime: "2023-09-24T10:30:03Z"
+        serveDeploymentStatuses:
+          GradioIngress:
+            healthLastUpdateTime: "2023-09-24T10:30:03Z"
+            lastUpdateTime: "2023-09-24T10:30:03Z"
+            status: HEALTHY
+        status: RUNNING
+    dashboardStatus:
+      healthLastUpdateTime: "2023-09-24T10:30:03Z"
+      isHealthy: true
+      lastUpdateTime: "2023-09-24T10:30:03Z"
+    rayClusterName: serve-amazon-light-gpt-raycluster-kjmcw
+    rayClusterStatus:
+      head: {}
+  observedGeneration: 1
+  pendingServiceStatus:
+    dashboardStatus: {}
+    rayClusterStatus:
+      head: {}
+  serviceStatus: Running

@@ -7,6 +7,14 @@ from collections import namedtuple
 
 from ray.serve.gradio_integrations import GradioServer
 
+import logging
+from ray import serve
+import ray
+from ray.serve.gradio_integrations import GradioIngress
+
+
+PROJECT_NAME = "LLMFrontend"
+
 env_model = "MODEL_NAME"
 env_backend = "BACKEND_URL"
 TIMEOUT = (5, 120)
@@ -125,9 +133,54 @@ def _get_text(result: dict) -> str:
         return result["choices"][0]["delta"].get("content", "")
 
 
-app = GradioServer.options(
-    num_replicas=1,
-    ray_actor_options={"num_cpus": 1}
-).bind(
-    chatbot
-)
+std_logger = logging.getLogger("ray.serve")
+route_prefix = "/frontend"
+
+
+@serve.deployment(route_prefix=route_prefix, name=PROJECT_NAME)
+class LLMFrontend(GradioIngress):
+    def __init__(self, builder):
+        std_logger.setLevel(logging.ERROR)
+        blocks = builder()
+        super().__init__(lambda: blocks)
+
+        # Gradio queue will make POST requests to the Gradio application
+        # using the public URL, while overriding the authorization
+        # headers with its own. This results in the public URL rejecting
+        # the connection. This is a hacky workaround to set the URL
+        # the queue will use to localhost.
+        def noop(*args, **kwargs):
+            pass
+
+        # Get the port the serve app is running on
+        controller = ray.serve.context.get_global_client()._controller
+        port = ray.get(controller.get_http_config.remote()).port
+
+        blocks._queue.set_url(f"http://localhost:{port}{route_prefix}/")
+        blocks._queue.set_url = noop
+
+
+app = LLMFrontend.options(
+    ray_actor_options={
+        "num_replicas": 1,
+        "num_cpus": 1,
+        "runtime_env": {
+            "env_vars": {
+                k: v
+                for k, v in os.environ.items()
+                if k.startswith("AVIARY") or k.startswith("OPENAI")
+            }
+        },
+    },
+).bind(chatbot)
+
+if __name__ == "__main__":
+    ray.init(ignore_reinit_error=True)
+    chatbot().launch(show_error=True)
+
+# app = GradioServer.options(
+#     num_replicas=1,
+#     ray_actor_options={"num_cpus": 1}
+# ).bind(
+#     chatbot
+# )

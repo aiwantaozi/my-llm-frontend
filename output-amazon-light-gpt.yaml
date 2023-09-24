@@ -1,0 +1,130 @@
+apiVersion: ray.io/v1alpha1
+kind: RayService
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"ray.io/v1alpha1","kind":"RayService","metadata":{"annotations":{},"name":"amazon-light-gpt","namespace":"default"},"spec":{"deploymentUnhealthySecondThreshold":1200,"rayClusterConfig":{"headGroupSpec":{"rayStartParams":{"dashboard-host":"0.0.0.0","resources":"\"{\\\"accelerator_type_cpu\\\": 2}\""},"template":{"spec":{"containers":[{"image":"anyscale/aviary:latest","name":"ray-head","ports":[{"containerPort":6379,"name":"gcs-server"},{"containerPort":8265,"name":"dashboard"},{"containerPort":10001,"name":"client"},{"containerPort":8000,"name":"serve"}],"resources":{"limits":{"cpu":2,"memory":"8Gi"},"requests":{"cpu":2,"memory":"8Gi"}}}]}}},"workerGroupSpecs":[{"groupName":"gpu-group","maxReplicas":1,"minReplicas":0,"rayStartParams":{"resources":"\"{\\\"accelerator_type_cpu\\\": 48, \\\"accelerator_type_a10\\\": 2, \\\"accelerator_type_a100\\\": 2}\""},"replicas":1,"template":{"spec":{"containers":[{"image":"anyscale/aviary:latest","lifecycle":{"preStop":{"exec":{"command":["/bin/sh","-c","ray stop"]}}},"name":"llm","ports":[{"containerPort":8000,"name":"serve"}],"resources":{"limits":{"cpu":"48","memory":"192G","nvidia.com/gpu":4},"requests":{"cpu":"36","memory":"128G","nvidia.com/gpu":4}}}],"tolerations":[{"effect":"NoSchedule","key":"ray.io/node-type","operator":"Equal","value":"worker"}]}}}]},"serveConfigV2":"applications:\n- name: amazon--LightGPT\n  import_path: aviary.backend:llm_application\n  route_prefix: /amazon--LightGPT\n  args:\n    model: \"./models/continuous_batching/amazon--LightGPT.yaml\"\n- name: router\n  import_path: aviary.backend:router_application\n  route_prefix: /\n  args:\n    models:\n      amazon/LightGPT: ./models/continuous_batching/amazon--LightGPT.yaml\n","serviceUnhealthySecondThreshold":1200}}
+  creationTimestamp: "2023-09-24T08:55:47Z"
+  generation: 1
+  name: amazon-light-gpt
+  namespace: default
+  resourceVersion: "159030"
+  uid: 9a7ce3e0-a148-4464-af5b-7f798feba4ab
+spec:
+  deploymentUnhealthySecondThreshold: 1200
+  rayClusterConfig:
+    headGroupSpec:
+      rayStartParams:
+        dashboard-host: 0.0.0.0
+        resources: '"{\"accelerator_type_cpu\": 2}"'
+      template:
+        spec:
+          containers:
+          - image: anyscale/aviary:latest
+            name: ray-head
+            ports:
+            - containerPort: 6379
+              name: gcs-server
+              protocol: TCP
+            - containerPort: 8265
+              name: dashboard
+              protocol: TCP
+            - containerPort: 10001
+              name: client
+              protocol: TCP
+            - containerPort: 8000
+              name: serve
+              protocol: TCP
+            resources:
+              limits:
+                cpu: 2
+                memory: 8Gi
+              requests:
+                cpu: 2
+                memory: 8Gi
+    workerGroupSpecs:
+    - groupName: gpu-group
+      maxReplicas: 1
+      minReplicas: 0
+      rayStartParams:
+        resources: '"{\"accelerator_type_cpu\": 48, \"accelerator_type_a10\": 2, \"accelerator_type_a100\":
+          2}"'
+      replicas: 1
+      template:
+        spec:
+          containers:
+          - image: anyscale/aviary:latest
+            lifecycle:
+              preStop:
+                exec:
+                  command:
+                  - /bin/sh
+                  - -c
+                  - ray stop
+            name: llm
+            ports:
+            - containerPort: 8000
+              name: serve
+              protocol: TCP
+            resources:
+              limits:
+                cpu: "48"
+                memory: 192G
+                nvidia.com/gpu: 4
+              requests:
+                cpu: "36"
+                memory: 128G
+                nvidia.com/gpu: 4
+          tolerations:
+          - effect: NoSchedule
+            key: ray.io/node-type
+            operator: Equal
+            value: worker
+  serveConfigV2: |
+    applications:
+    - name: amazon--LightGPT
+      import_path: aviary.backend:llm_application
+      route_prefix: /amazon--LightGPT
+      args:
+        model: "./models/continuous_batching/amazon--LightGPT.yaml"
+    - name: router
+      import_path: aviary.backend:router_application
+      route_prefix: /
+      args:
+        models:
+          amazon/LightGPT: ./models/continuous_batching/amazon--LightGPT.yaml
+  serviceUnhealthySecondThreshold: 1200
+status:
+  activeServiceStatus:
+    applicationStatuses:
+      amazon--LightGPT:
+        healthLastUpdateTime: "2023-09-24T09:02:43Z"
+        lastUpdateTime: "2023-09-24T09:02:43Z"
+        serveDeploymentStatuses:
+          amazon--LightGPT:
+            healthLastUpdateTime: "2023-09-24T09:02:43Z"
+            lastUpdateTime: "2023-09-24T09:02:43Z"
+            status: HEALTHY
+        status: RUNNING
+      router:
+        healthLastUpdateTime: "2023-09-24T09:02:43Z"
+        lastUpdateTime: "2023-09-24T09:02:43Z"
+        serveDeploymentStatuses:
+          Router:
+            healthLastUpdateTime: "2023-09-24T09:02:43Z"
+            lastUpdateTime: "2023-09-24T09:02:43Z"
+            status: HEALTHY
+        status: RUNNING
+    dashboardStatus:
+      healthLastUpdateTime: "2023-09-24T09:02:43Z"
+      isHealthy: true
+      lastUpdateTime: "2023-09-24T09:02:43Z"
+    rayClusterName: amazon-light-gpt-raycluster-qxzkq
+    rayClusterStatus:
+      head: {}
+  observedGeneration: 1
+  pendingServiceStatus:
+    dashboardStatus: {}
+    rayClusterStatus:
+      head: {}
+  serviceStatus: Running
