@@ -162,13 +162,11 @@ class LLMFrontend(GradioIngress):
 
 app = LLMFrontend.options(
     ray_actor_options={
-        "num_replicas": 1,
         "num_cpus": 1,
         "runtime_env": {
             "env_vars": {
                 k: v
                 for k, v in os.environ.items()
-                if k.startswith("AVIARY") or k.startswith("OPENAI")
             }
         },
     },

@@ -25,7 +25,7 @@ spec:
   serveConfig:
     importPath: ray_main.app
     runtimeEnv: |
-      working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/main/my-llm-frontend.zip"
+      working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/terraform-test/my-llm-frontend.zip"
       pip:
         - gradio
   rayClusterConfig:
