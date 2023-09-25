@@ -5,7 +5,7 @@
 apiVersion: ray.io/v1alpha1
 kind: RayService
 metadata:
-  name: serve-amazon-light-gpt-test
+  name: ui-amazon-light-gpt
   labels:
     ray.io/scheduler-name: volcano
     volcano.sh/queue-name: kuberay-default-queue
@@ -23,7 +23,7 @@ spec:
       type: NodePort
       ports:
         - port: 8000
-          nodePort: 32345
+          nodePort: 31207
           name: serve-amazon-light-gpt-port
   serveConfigV2: |
     applications:
@@ -31,7 +31,7 @@ spec:
         import_path: ray_main.app
         route_prefix: /frontend
         runtime_env:
-          working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/terraform-test/my-llm-frontend2.zip"
+          working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/terraform-test/llm-ui.zip"
           pip: ["gradio"]
   # serveConfig:
   #   importPath: ray_main.app
@@ -79,8 +79,8 @@ spec:
     workerGroupSpecs:
       # the pod replicas in this group typed worker
       - replicas: 1
-        minReplicas: 1
-        maxReplicas: 5
+        minReplicas: 0
+        maxReplicas: 3
         # logical group name, for this called small-group, also can be functional
         groupName: small-group
         # The `rayStartParams` are used to configure the `ray start` command.

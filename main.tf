@@ -13,6 +13,9 @@ apiVersion: ray.io/v1alpha1
 kind: RayService
 metadata:
   name: amazon-light-gpt
+  labels:
+    ray.io/scheduler-name: volcano
+    volcano.sh/queue-name: kuberay-default-queue
 spec:
   serviceUnhealthySecondThreshold: 1200 # Config for the health check threshold for service. Default value is 60.
   deploymentUnhealthySecondThreshold: 1200 # Config for the health check threshold for deployments. Default value is 60.
@@ -100,7 +103,7 @@ spec:
 YAML
 }
 
-resource "kubectl_manifest" "serve-amazon-light-gpt" {
+resource "kubectl_manifest" "ui-amazon-light-gpt" {
   yaml_body = <<YAML
 # Make sure to increase resource requests and limits before using this example in production.
 # For examples with more realistic resource configuration, see
@@ -109,7 +112,10 @@ resource "kubectl_manifest" "serve-amazon-light-gpt" {
 apiVersion: ray.io/v1alpha1
 kind: RayService
 metadata:
-  name: serve-amazon-light-gpt
+  name: ui-amazon-light-gpt
+  labels:
+    ray.io/scheduler-name: volcano
+    volcano.sh/queue-name: kuberay-default-queue
 spec:
   serviceUnhealthySecondThreshold: 900 # Config for the health check threshold for Ray Serve applications. Default value is 900.
   deploymentUnhealthySecondThreshold: 300 # Config for the health check threshold for Ray dashboard agent. Default value is 300.
@@ -124,14 +130,22 @@ spec:
       type: NodePort
       ports:
         - port: 8000
-          nodePort: 32345
+          nodePort: 31207
           name: serve-amazon-light-gpt-port
-  serveConfig:
-    importPath: ray_main.app
-    runtimeEnv: |
-      working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/main/my-llm-frontend.zip"
-      pip:
-        - gradio
+  serveConfigV2: |
+    applications:
+      - name: serve-amazon-light-gpt
+        import_path: ray_main.app
+        route_prefix: /frontend
+        runtime_env:
+          working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/terraform-test/llm-ui.zip"
+          pip: ["gradio"]
+  # serveConfig:
+  #   importPath: ray_main.app
+  #   runtimeEnv: |
+  #     working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/terraform-test/my-llm-frontend.zip"
+  #     pip:
+  #      - gradio
   rayClusterConfig:
     rayVersion: "2.7.0" # should match the Ray version in the image of the containers
     ######################headGroupSpecs#################################
@@ -147,7 +161,7 @@ spec:
         spec:
           containers:
             - name: ray-head
-              image: rayproject/ray:2.7.0
+              image: anyscale/aviary:latest
               env: 
               - name: MODEL_NAME
                 value: amazon/LightGPT
@@ -172,8 +186,8 @@ spec:
     workerGroupSpecs:
       # the pod replicas in this group typed worker
       - replicas: 1
-        minReplicas: 1
-        maxReplicas: 5
+        minReplicas: 0
+        maxReplicas: 3
         # logical group name, for this called small-group, also can be functional
         groupName: small-group
         # The `rayStartParams` are used to configure the `ray start` command.
@@ -185,22 +199,22 @@ spec:
           spec:
             containers:
               - name: ray-worker # must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name',  or '123-abc'
-                image: rayproject/ray:2.7.0
+                image: anyscale/aviary:latest
                 lifecycle:
                   preStop:
                     exec:
                       command: ["/bin/sh", "-c", "ray stop"]
                 env: 
                 - name: MODEL_NAME
-                  value: test
+                  value: amazon/LightGPT
                 - name: BACKEND_URL
-                  value: "http://192.168.0.9:1323"
+                  value: "http://amazon-light-gpt-serve-svc:8000"
                 resources:
                   limits:
-                    cpu: "500m"
-                    memory: "1Gi"
+                    cpu: "1000m"
+                    memory: "2Gi"
                   requests:
-                    cpu: "500m"
-                    memory: "1Gi"
+                    cpu: "1000m"
+                    memory: "2Gi"
 YAML
 }
