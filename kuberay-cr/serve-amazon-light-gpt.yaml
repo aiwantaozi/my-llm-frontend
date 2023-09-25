@@ -6,6 +6,9 @@ apiVersion: ray.io/v1alpha1
 kind: RayService
 metadata:
   name: serve-amazon-light-gpt
+  labels:
+    ray.io/scheduler-name: volcano
+    volcano.sh/queue-name: kuberay-default-queue
 spec:
   serviceUnhealthySecondThreshold: 900 # Config for the health check threshold for Ray Serve applications. Default value is 900.
   deploymentUnhealthySecondThreshold: 300 # Config for the health check threshold for Ray dashboard agent. Default value is 300.
@@ -29,8 +32,7 @@ spec:
         route_prefix: /frontend
         runtime_env:
           working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/terraform-test/my-llm-frontend.zip"
-          pip:
-            - gradio
+          pip: ["gradio"]
   # serveConfig:
   #   importPath: ray_main.app
   #   runtimeEnv: |

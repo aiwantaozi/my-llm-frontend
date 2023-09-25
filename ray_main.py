@@ -167,7 +167,8 @@ app = LLMFrontend.options(
             "env_vars": {
                 k: v
                 for k, v in os.environ.items()
-            }
+            },
+            "pip": ["gradio"]
         },
     },
 ).bind(chatbot)

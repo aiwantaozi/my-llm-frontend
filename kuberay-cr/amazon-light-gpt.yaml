@@ -2,6 +2,9 @@ apiVersion: ray.io/v1alpha1
 kind: RayService
 metadata:
   name: amazon-light-gpt
+  labels:
+    ray.io/scheduler-name: volcano
+    volcano.sh/queue-name: kuberay-default-queue
 spec:
   serviceUnhealthySecondThreshold: 1200 # Config for the health check threshold for service. Default value is 60.
   deploymentUnhealthySecondThreshold: 1200 # Config for the health check threshold for deployments. Default value is 60.

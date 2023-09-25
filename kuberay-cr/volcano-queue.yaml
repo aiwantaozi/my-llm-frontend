@@ -1,0 +1,10 @@
+apiVersion: scheduling.volcano.sh/v1beta1
+kind: Queue
+metadata:
+  name: kuberay-default-queue
+spec:
+  weight: 1
+  capability:
+    cpu: 64
+    memory: 310Gi
+    nvidia.com/gpu: 4
