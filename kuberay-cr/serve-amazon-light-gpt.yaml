@@ -22,12 +22,21 @@ spec:
         - port: 8000
           nodePort: 32345
           name: serve-amazon-light-gpt-port
-  serveConfig:
-    importPath: ray_main.app
-    runtimeEnv: |
-      working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/terraform-test/my-llm-frontend.zip"
-      pip:
-        - gradio
+  serveConfigV2: |
+    applications:
+      - name: serve-amazon-light-gpt
+        import_path: ray_main.app
+        route_prefix: /frontend
+        runtime_env:
+          working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/terraform-test/my-llm-frontend.zip"
+          pip:
+            - gradio
+  # serveConfig:
+  #   importPath: ray_main.app
+  #   runtimeEnv: |
+  #     working_dir: "https://raw.githubusercontent.com/aiwantaozi/my-llm-frontend/terraform-test/my-llm-frontend.zip"
+  #     pip:
+  #      - gradio
   rayClusterConfig:
     rayVersion: "2.7.0" # should match the Ray version in the image of the containers
     ######################headGroupSpecs#################################
