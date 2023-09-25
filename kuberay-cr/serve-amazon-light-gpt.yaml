@@ -5,7 +5,7 @@
 apiVersion: ray.io/v1alpha1
 kind: RayService
 metadata:
-  name: serve-amazon-light-gpt
+  name: serve-amazon-light-gpt-test
   labels:
     ray.io/scheduler-name: volcano
     volcano.sh/queue-name: kuberay-default-queue
