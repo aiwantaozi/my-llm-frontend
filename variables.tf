@@ -11,6 +11,13 @@ variable "public_endpoint" {
   default     = true
   description = "expose node port access for the LLM service UI"
 }
+# @label "Hugging Face Token"
+# @group "Basic/Autoscaling"
+variable "hugging_face_token" {
+  type        = string
+  default     = 1
+  description = "Hugging Face token use for download llama"
+}
 # @label "Min Replica"
 # @group "Basic/Autoscaling"
 variable "min_replica" {
