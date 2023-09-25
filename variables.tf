@@ -1,11 +1,11 @@
 # @label "Name"
-# @group "Basic"
+# @group "Basic/Basic"
 variable "name" {
   type        = string
   description = "name for deployed cluster"
 }
 # @label "Public Endpoint"
-# @group "Basic"
+# @group "Basic/Basic"
 variable "public_endpoint" {
   type        = bool
   default     = true
