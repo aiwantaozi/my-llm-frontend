@@ -12,14 +12,14 @@ variable "public_endpoint" {
   description = "expose node port access for the LLM service UI"
 }
 # @label "Min Replica"
-# @group "Basic"
+# @group "Basic/Autoscaling"
 variable "min_replica" {
   type        = number
   default     = 1
   description = "min replica for the LLM service, automatically scale the number of replicas for your LLM service within min and max based on the load"
 }
 # @label "Max Replica"
-# @group "Basic"
+# @group "Basic/Autoscaling"
 variable "max_replica" {
   type        = number
   default     = 1
