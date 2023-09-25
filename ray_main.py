@@ -5,13 +5,11 @@ from typing import AsyncIterator,  Union, Dict
 import aiohttp
 from collections import namedtuple
 
-from ray.serve.gradio_integrations import GradioServer
-
 import logging
-from ray import serve
 import ray
-from ray.serve.gradio_integrations import GradioIngress
 
+from ray import serve
+from ray.serve.gradio_integrations import GradioIngress
 
 PROJECT_NAME = "LLMFrontend"
 
@@ -176,10 +174,3 @@ app = LLMFrontend.options(
 if __name__ == "__main__":
     ray.init(ignore_reinit_error=True)
     chatbot().launch(show_error=True)
-
-# app = GradioServer.options(
-#     num_replicas=1,
-#     ray_actor_options={"num_cpus": 1}
-# ).bind(
-#     chatbot
-# )
